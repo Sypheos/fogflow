@@ -9,8 +9,8 @@ import (
 	"github.com/ant0ine/go-json-rest/rest"
 	"github.com/satori/go.uuid"
 
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 type ThinBroker struct {

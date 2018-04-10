@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"math"
 
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 //

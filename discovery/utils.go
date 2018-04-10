@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 func matchEntityId(entity EntityId, subscribedEntity EntityId) bool {

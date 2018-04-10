@@ -16,8 +16,8 @@ import (
 
 	docker "github.com/fsouza/go-dockerclient"
 
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 type taskContext struct {

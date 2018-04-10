@@ -3,7 +3,7 @@ package datamodel
 import (
 	"encoding/json"
 
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 // Message represents a single task invocation

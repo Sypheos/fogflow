@@ -6,8 +6,8 @@ import (
 	"hash/fnv"
 	"sync"
 
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 func hash(s string) uint32 {

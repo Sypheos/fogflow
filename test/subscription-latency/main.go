@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 	"os"
 	"os/signal"
 	"strconv"

@@ -9,7 +9,7 @@ import (
 
 	_ "github.com/lib/pq"
 
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 type EntityRepository struct {

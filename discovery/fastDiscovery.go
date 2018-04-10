@@ -12,7 +12,7 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/satori/go.uuid"
 
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 type FastDiscovery struct {

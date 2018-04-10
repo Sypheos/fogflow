@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	. "fogflow/common/communicator"
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/communicator"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 type Master struct {

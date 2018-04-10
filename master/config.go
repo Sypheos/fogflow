@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	. "fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/datamodel"
 )
 
 var (

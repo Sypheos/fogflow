@@ -5,8 +5,8 @@ import (
 
 	"github.com/satori/go.uuid"
 
-	. "fogflow/common/datamodel"
-	. "fogflow/common/ngsi"
+	. "github.com/Sypheos/fogflow/common/datamodel"
+	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 func GenerateExcutionPlan(rootTask *TaskNode, streamObjects []*ContextObject) []*TaskInstance {
