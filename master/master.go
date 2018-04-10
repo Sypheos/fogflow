@@ -1,4 +1,4 @@
-package main
+package master
 
 import (
 	"encoding/json"
@@ -434,7 +434,7 @@ func (master *Master) DeployTask(taskInstance *ScheduledTaskInstance) {
 	assignedWorkerID := (*taskInstance).WorkerID
 	(*taskInstance).DockerImage = master.DetermineDockerImage(operatorName, assignedWorkerID)
 
-	taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.myID, PayLoad: *taskInstance}
+	taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.MyID, PayLoad: *taskInstance}
 	INFO.Println(taskMsg)
 	master.communicator.Publish(&taskMsg)
 }
