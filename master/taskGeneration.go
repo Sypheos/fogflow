@@ -1,4 +1,4 @@
-package main
+package master
 
 import (
 	"fmt"
@@ -47,13 +47,7 @@ func generateTaskInstances(root *TaskNode, streams []*ContextObject, restriction
 	for _, value := range values {
 		instance := TaskInstance{}
 
-		uid, err := uuid.NewV4()
-		if err != nil {
-			fmt.Printf("Something went wrong: %s", err)
-			return instances
-		}
-
-		instance.ID = root.Task.Name + "." + uid.String()
+		instance.ID = root.Task.Name + "." + uuid.NewV4().String()
 		instance.TaskNode = root
 
 		// update the set of restrictions for all sub tasks

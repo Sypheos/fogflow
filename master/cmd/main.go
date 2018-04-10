@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"flag"
@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"strconv"
 	"syscall"
+
+	"github.com/Sypheos/fogflow/master"
 )
 
 func generateRandomNum() string {
@@ -19,7 +21,7 @@ func main() {
 
 	flag.Parse()
 
-	config := CreateConfig(*configurationFile)
+	config := master.CreateConfig(*configurationFile)
 
 	if *myID == "" {
 		*myID = generateRandomNum()
@@ -36,7 +38,7 @@ func main() {
 		config.MessageBus = value
 	}
 
-	master := Master{myID: *myID}
+	master := master.Master{MyID: *myID}
 	master.Start(&config)
 
 	c := make(chan os.Signal, 1)
