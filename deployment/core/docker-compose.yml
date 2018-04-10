@@ -11,6 +11,7 @@ services:
             - discovery
             - broker
     discovery:
+        build: ../../discovery
         image: fogflow/discovery
         volumes:
             - ./discovery-config.json:/config.json                        

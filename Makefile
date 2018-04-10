@@ -57,24 +57,15 @@ discovery.docker: discovery
 
 master:MAIN=./master/cmd/main.go
 master:$(RELEASE_DIR)/master-$(GOOS)-$(GOARCH)
-master.docker: master
+master.docker: discovery
 	docker build -f ./master/Dockerfile -t "fogflow/master" .
 
 worker:MAIN=./worker/cmd/main.go
 worker:$(RELEASE_DIR)/worker-$(GOOS)-$(GOARCH)
-worker.docker: worker
+worker.docker: discovery
 	docker build -f ./worker/Dockerfile -t "fogflow/worker" .
 
 # Build the executable
 $(RELEASE_DIR)/%:
-	@$(log) "Building" [$(GO_ENV) GOOS=$(LAZY_GOOS) GOARCH=$(LAZY_GOARCH) $(GO) build $(GO_FLAGS) $(MAIN)'\t'] to "$@$(LAZY_GOEXE)"
-	@$(GO_ENV) go build -o "$@$(LAZY_GOEXE)" $(GO_FLAGS) $(LD_FLAGS) $(MAIN)
-	@chmod +x $@
-
-all: broker discovery master worker
-
-all.docker: broker.docker discovery.docker
-clean:
-	rm -rf ./release/*
-
-re: clean all
+	@$(log) "Building" [$(GO_ENV) GOOS=$(LAZY_GOOS) GOARCH=$(LAZY_GOARCH) $(GO) build $(GO_FLAGS) ...] to "$@$(LAZY_GOEXE)"
+	@$(GO_ENV) go build -gcflags="all=-trimpath=$(GO_PATH)" -asmflags="all=-trimpath=$(GO_PATH)" -o "$@$(LAZY_GOEXE)" $(GO_FLAGS) $(LD_FLAGS) $(MAIN)
