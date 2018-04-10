@@ -45,7 +45,7 @@ test:
 	@$(log) "Testing `$(TEST_PACKAGES) | $(count)` go packages"
 	@$(GO) test $(GO_TEST_FLAGS) `$(TEST_PACKAGES)`
 
-broker:MAIN=./broker/main.go
+broker:MAIN=./broker/cmd/main.go
 broker:$(RELEASE_DIR)/broker-$(GOOS)-$(GOARCH)
 
 # Build the executable

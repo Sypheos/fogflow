@@ -1,4 +1,4 @@
-package main
+package broker
 
 import (
 	"fmt"
@@ -45,11 +45,7 @@ type ThinBroker struct {
 }
 
 func (tb *ThinBroker) Start(cfg *Config) {
-	myid, err := uuid.NewV4()
-	if err != nil {
-		ERROR.Println("FAILED TO GENERATE A UNIQUE ID")
-		return
-	}
+	myid := uuid.NewV4()
 
 	tb.MyID = myid.String()
 
@@ -538,12 +534,7 @@ func (tb *ThinBroker) SubscribeContext(w rest.ResponseWriter, r *rest.Request) {
 	}
 
 	// new SubscriptionID
-	u1, err := uuid.NewV4()
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	subID := u1.String()
+	subID := uuid.NewV4().String()
 
 	// send out the response
 	subResp := SubscribeContextResponse{}

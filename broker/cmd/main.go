@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"encoding/json"
@@ -8,12 +8,14 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/Sypheos/fogflow/broker"
 )
 
 func main() {
 	cfgFile := flag.String("f", "config.json", "A configuration file")
 	flag.Parse()
-	config := CreateConfig(*cfgFile)
+	config := broker.CreateConfig(*cfgFile)
 
 	// overwrite the configuration with environment variables
 	if value, exist := os.LookupEnv("host"); exist {
@@ -30,9 +32,9 @@ func main() {
 	for {
 		resp, err := http.Get(config.IoTDiscoveryURL + "/status")
 		if err != nil {
-			ERROR.Println(err)
+			broker.ERROR.Println(err)
 		} else {
-			INFO.Println(resp.StatusCode)
+			broker.INFO.Println(resp.StatusCode)
 		}
 
 		if (err == nil) && (resp.StatusCode == 200) {
@@ -42,19 +44,19 @@ func main() {
 		}
 	}
 
-	// initialize broker
-	broker := ThinBroker{}
-	broker.Start(&config)
+	// initialize thinBroker
+	thinBroker := broker.ThinBroker{}
+	thinBroker.Start(&config)
 
 	// start the REST API server
-	restapi := &RestApiSrv{}
-	restapi.Start(&config, &broker)
+	restapi := &broker.RestApiSrv{}
+	restapi.Start(&config, &thinBroker)
 
 	// start a timer to do something periodically
 	ticker := time.NewTicker(2 * time.Second)
 	go func() {
 		for _ = range ticker.C {
-			broker.OnTimer()
+			thinBroker.OnTimer()
 		}
 	}()
 
@@ -70,6 +72,6 @@ func main() {
 	// stop the REST API server
 	restapi.Stop()
 
-	// stop the broker
-	broker.Stop()
+	// stop the thinBroker
+	thinBroker.Stop()
 }
