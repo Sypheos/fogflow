@@ -47,15 +47,23 @@ test:
 
 broker:MAIN=./broker/cmd/main.go
 broker:$(RELEASE_DIR)/broker-$(GOOS)-$(GOARCH)
+broker.docker: broker
+	docker build -f ./broker/Dockerfile -t "fogflow/broker" .
 
 discovery:MAIN=./discovery/cmd/main.go
 discovery:$(RELEASE_DIR)/discovery-$(GOOS)-$(GOARCH)
+discovery.docker: discovery
+	docker build -f ./discovery/Dockerfile -t "fogflow/discovery" .
 
 master:MAIN=./master/cmd/main.go
 master:$(RELEASE_DIR)/master-$(GOOS)-$(GOARCH)
+master.docker: discovery
+	docker build -f ./master/Dockerfile -t "fogflow/master" .
 
 worker:MAIN=./worker/cmd/main.go
 worker:$(RELEASE_DIR)/worker-$(GOOS)-$(GOARCH)
+worker.docker: discovery
+	docker build -f ./worker/Dockerfile -t "fogflow/worker" .
 
 # Build the executable
 $(RELEASE_DIR)/%:

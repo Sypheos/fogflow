@@ -13,6 +13,7 @@ services:
             - discovery
             - broker
     discovery:
+        build: ../../discovery
         image: fogflow/discovery
         ports:
             - 8071:8071

@@ -1,5 +1,4 @@
 FROM scratch
-ADD discovery  /
-ADD config.json /
-CMD ["/discovery"]
-
+ADD ./release/discovery-linux-amd64  /
+ADD ./discovery/config.json /
+CMD ["/discovery-linux-amd64"]

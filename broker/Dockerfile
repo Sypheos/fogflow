@@ -1,5 +1,4 @@
 FROM scratch
-ADD broker  /
-ADD config.json /
-CMD ["/broker"]
-
+ADD ./release/broker-linux-amd64  /
+ADD ./broker/config.json /
+CMD ["/broker-linux-amd64"]

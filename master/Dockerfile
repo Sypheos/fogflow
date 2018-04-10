@@ -1,5 +1,4 @@
 FROM scratch
-ADD master  /
-ADD config.json /
-CMD ["/master"]
-
+ADD ./release/master-linux-amd64  /
+ADD ./master/config.json /
+CMD ["/master-linux-amd64"]
