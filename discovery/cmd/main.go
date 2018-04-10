@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"flag"
@@ -9,13 +9,14 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/Sypheos/fogflow/discovery"
 	"github.com/ant0ine/go-json-rest/rest"
 )
 
 func main() {
 	cfgFile := flag.String("f", "config.json", "A configuration file")
 	flag.Parse()
-	config := CreateConfig(*cfgFile)
+	config := discovery.CreateConfig(*cfgFile)
 
 	// overwrite the configuration with environment variables
 	if hostip, exist := os.LookupEnv("postgresql_host"); exist {
@@ -26,7 +27,7 @@ func main() {
 	}
 
 	// initialize IoT Discovery
-	iotDiscovery := FastDiscovery{}
+	iotDiscovery := discovery.FastDiscovery{}
 	iotDiscovery.Init(&config.Database)
 
 	// start REST API server
@@ -38,12 +39,12 @@ func main() {
 		rest.Post("/ngsi9/unsubscribeContextAvailability", iotDiscovery.UnsubscribeContextAvailability),
 
 		// convenient ngsi9 API
-		rest.Get("/ngsi9/registration/#eid", iotDiscovery.getRegisteredEntity),
-		rest.Delete("/ngsi9/registration/#eid", iotDiscovery.deleteRegisteredEntity),
-		rest.Get("/ngsi9/subscription/#sid", iotDiscovery.getSubscription),
-		rest.Get("/ngsi9/subscription", iotDiscovery.getSubscriptions),
+		rest.Get("/ngsi9/registration/#eid", iotDiscovery.GetRegisteredEntity),
+		rest.Delete("/ngsi9/registration/#eid", iotDiscovery.DeleteRegisteredEntity),
+		rest.Get("/ngsi9/subscription/#sid", iotDiscovery.GetSubscription),
+		rest.Get("/ngsi9/subscription", iotDiscovery.GetSubscriptions),
 
-		rest.Get("/ngsi9/status", iotDiscovery.getStatus),
+		rest.Get("/ngsi9/status", iotDiscovery.GetStatus),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -67,7 +68,7 @@ func main() {
 	api.SetApp(router)
 
 	go func() {
-		INFO.Printf("Starting IoT Discovery on port %d\n", config.MyPort)
+		discovery.INFO.Printf("Starting IoT Discovery on port %d\n", config.MyPort)
 		panic(http.ListenAndServe(":"+strconv.Itoa(config.MyPort), api.MakeHandler()))
 	}()
 

@@ -1,6 +1,6 @@
 RELEASE_DIR ?= release#
 GO_ENV = CGO_ENABLED=0
-GO_FLAGS = -a
+GO_FLAGS =
 LOG_NAME ?= $(shell basename $$(pwd))
 log = echo -e "$(LOG_NAME) "
 
@@ -47,6 +47,15 @@ test:
 
 broker:MAIN=./broker/cmd/main.go
 broker:$(RELEASE_DIR)/broker-$(GOOS)-$(GOARCH)
+
+discovery:MAIN=./discovery/cmd/main.go
+discovery:$(RELEASE_DIR)/discovery-$(GOOS)-$(GOARCH)
+
+master:MAIN=./master/cmd/main.go
+master:$(RELEASE_DIR)/master-$(GOOS)-$(GOARCH)
+
+worker:MAIN=./worker/cmd/main.go
+worker:$(RELEASE_DIR)/worker-$(GOOS)-$(GOARCH)
 
 # Build the executable
 $(RELEASE_DIR)/%:

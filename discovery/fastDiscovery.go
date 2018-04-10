@@ -1,4 +1,4 @@
-package main
+package discovery
 
 import (
 	"bytes"
@@ -42,11 +42,7 @@ func (fd *FastDiscovery) RegisterContext(w rest.ResponseWriter, r *rest.Request)
 	}
 
 	if registerCtxReq.RegistrationId == "" {
-		u1, err := uuid.NewV4()
-		if err != nil {
-			rest.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		u1 := uuid.NewV4()
 		registrationID := u1.String()
 		registerCtxReq.RegistrationId = registrationID
 	}
@@ -207,12 +203,7 @@ func (fd *FastDiscovery) SubscribeContextAvailability(w rest.ResponseWriter, r *
 	}
 
 	// generate a new subscription id
-	u1, err := uuid.NewV4()
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	subID := u1.String()
+	subID := uuid.NewV4().String()
 
 	subscribeCtxAvailabilityReq.SubscriptionId = subID
 
@@ -336,14 +327,14 @@ func (fd *FastDiscovery) UnsubscribeContextAvailability(w rest.ResponseWriter, r
 	w.WriteJson(&unsubscribeCtxAvailabilityResp)
 }
 
-func (fd *FastDiscovery) getRegisteredEntity(w rest.ResponseWriter, r *rest.Request) {
+func (fd *FastDiscovery) GetRegisteredEntity(w rest.ResponseWriter, r *rest.Request) {
 	var eid = r.PathParam("eid")
 
 	registration := fd.repository.retrieveRegistration(eid)
 	w.WriteJson(registration)
 }
 
-func (fd *FastDiscovery) deleteRegisteredEntity(w rest.ResponseWriter, r *rest.Request) {
+func (fd *FastDiscovery) DeleteRegisteredEntity(w rest.ResponseWriter, r *rest.Request) {
 	var eid = r.PathParam("eid")
 
 	DEBUG.Printf("delete the context availability %s\r\n", eid)
@@ -356,7 +347,7 @@ func (fd *FastDiscovery) deleteRegisteredEntity(w rest.ResponseWriter, r *rest.R
 	w.WriteHeader(200)
 }
 
-func (fd *FastDiscovery) getSubscription(w rest.ResponseWriter, r *rest.Request) {
+func (fd *FastDiscovery) GetSubscription(w rest.ResponseWriter, r *rest.Request) {
 	var sid = r.PathParam("sid")
 
 	fd.subscriptions_lock.RLocker()
@@ -366,13 +357,13 @@ func (fd *FastDiscovery) getSubscription(w rest.ResponseWriter, r *rest.Request)
 	w.WriteJson(subscription)
 }
 
-func (fd *FastDiscovery) getSubscriptions(w rest.ResponseWriter, r *rest.Request) {
+func (fd *FastDiscovery) GetSubscriptions(w rest.ResponseWriter, r *rest.Request) {
 	fd.subscriptions_lock.RLock()
 	defer fd.subscriptions_lock.RUnlock()
 
 	w.WriteJson(fd.subscriptions)
 }
 
-func (fd *FastDiscovery) getStatus(w rest.ResponseWriter, r *rest.Request) {
+func (fd *FastDiscovery) GetStatus(w rest.ResponseWriter, r *rest.Request) {
 	w.WriteHeader(200)
 }
