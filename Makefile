@@ -69,3 +69,11 @@ worker.docker: discovery
 $(RELEASE_DIR)/%:
 	@$(log) "Building" [$(GO_ENV) GOOS=$(LAZY_GOOS) GOARCH=$(LAZY_GOARCH) $(GO) build $(GO_FLAGS) ...] to "$@$(LAZY_GOEXE)"
 	@$(GO_ENV) go build -gcflags="all=-trimpath=$(GO_PATH)" -asmflags="all=-trimpath=$(GO_PATH)" -o "$@$(LAZY_GOEXE)" $(GO_FLAGS) $(LD_FLAGS) $(MAIN)
+
+all: broker discovery
+
+all.docker: broker.docker discovery.docker
+clean:
+	rm -rf ./release/*
+
+re: clean all
