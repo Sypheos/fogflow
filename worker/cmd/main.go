@@ -6,6 +6,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/Sypheos/fogflow/worker"
 )
 
 func generateID(text string) string {
@@ -15,7 +17,7 @@ func generateID(text string) string {
 }
 
 func main() {
-	config := LoadConfig()
+	config := worker.LoadConfig()
 
 	// overwrite the configuration with environment variables
 	if value, exist := os.LookupEnv("myip"); exist {
@@ -28,11 +30,11 @@ func main() {
 		config.MessageBus = value
 	}
 
-	// start the worker to deal with tasks
-	var worker = &Worker{}
-	ok := worker.Start(&config)
+	// start the wrk to deal with tasks
+	var wrk = &worker.Worker{}
+	ok := wrk.Start(&config)
 	if ok == false {
-		ERROR.Println("failed to start the worker instance")
+		worker.ERROR.Println("failed to start the wrk instance")
 		return
 	}
 
@@ -41,5 +43,5 @@ func main() {
 	signal.Notify(c, syscall.SIGTERM)
 	<-c
 
-	worker.Quit()
+	wrk.Quit()
 }
