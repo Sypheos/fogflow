@@ -67,11 +67,11 @@ worker.docker: worker
 
 # Build the executable
 $(RELEASE_DIR)/%:
-	@$(log) "Building" [$(GO_ENV) GOOS=$(LAZY_GOOS) GOARCH=$(LAZY_GOARCH) $(GO) build $(GO_FLAGS) ...] to "$@$(LAZY_GOEXE)"
+	@$(log) "Building" [$(GO_ENV) GOOS=$(LAZY_GOOS) GOARCH=$(LAZY_GOARCH) $(GO) build $(GO_FLAGS) $(MAIN)'\t'] to "$@$(LAZY_GOEXE)"
 	@$(GO_ENV) go build -o "$@$(LAZY_GOEXE)" $(GO_FLAGS) $(LD_FLAGS) $(MAIN)
 	@chmod +x $@
 
-all: broker discovery
+all: broker discovery master worker
 
 all.docker: broker.docker discovery.docker
 clean:
