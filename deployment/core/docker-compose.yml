@@ -3,7 +3,7 @@ services:
     designer:
         image: fogflow/designer
         environment:
-            - agentIP=${HOST_IP}
+            - agentIP=${HOST_IP}           
             - discoveryURL=http://discovery:8071/ngsi9
             - brokerURL=http://broker:8070/ngsi10
         ports:
@@ -13,13 +13,12 @@ services:
             - discovery
             - broker
     discovery:
-        build: ../../discovery
         image: fogflow/discovery
         ports:
             - 8071:8071
         environment:
             - postgresql_host=postgis
-            - postgresql_port=5432
+            - postgresql_port=5555
         depends_on: 
             - postgis
     broker:
@@ -36,7 +35,7 @@ services:
         environment:
             - myip=${HOST_IP}           
             - discoveryURL=http://discovery:8071/ngsi9
-            - rabbitmq=amqp://guest:guest@rabbitmq:5672/
+            - rabbitmq=amqp://admin:mypass@$rabbitmq:5672/
         ports:
             - 1060:1060 
         depends_on: 
@@ -48,8 +47,8 @@ services:
         ports:
             - 5555:5432
     rabbitmq:
-        image: rabbitmq
-        hostname: rabbit_node
+        image: tutum/rabbitmq
         ports:
-            - 15672:15672
             - 5672:5672
+        environment:
+            - RABBITMQ_PASS=mypass   
