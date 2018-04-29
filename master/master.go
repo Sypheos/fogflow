@@ -1,4 +1,4 @@
-package master
+package main
 
 import (
 	"encoding/json"
@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	. "github.com/Sypheos/fogflow/common/communicator"
-	. "github.com/Sypheos/fogflow/common/datamodel"
-	. "github.com/Sypheos/fogflow/common/ngsi"
+	. "fogflow/common/communicator"
+	. "fogflow/common/datamodel"
+	. "fogflow/common/ngsi"
 )
 
 type Master struct {
@@ -16,7 +16,7 @@ type Master struct {
 
 	BrokerURL string
 
-	MyID         string
+	myID         string
 	myURL        string
 	messageBus   string
 	discoveryURL string
@@ -101,13 +101,13 @@ func (master *Master) Start(configuration *Config) {
 		cfg.Broker = configuration.MessageBus
 		cfg.Exchange = "fogflow"
 		cfg.ExchangeType = "topic"
-		cfg.DefaultQueue = "master" + master.MyID
-		cfg.BindingKeys = []string{"master." + master.MyID + ".", "heartbeat.*"}
+		cfg.DefaultQueue = "master" + master.myID
+		cfg.BindingKeys = []string{"master." + master.myID + ".", "heartbeat.*"}
 
 		// create the communicator with the broker info and topics
 		master.communicator = NewCommunicator(&cfg)
 		for {
-			retry, err := master.communicator.StartConsuming("master"+master.MyID, master)
+			retry, err := master.communicator.StartConsuming("master"+master.myID, master)
 			if retry {
 				INFO.Printf("Going to retry launching the rabbitmq. Error: %v", err)
 			} else {
@@ -145,7 +145,7 @@ func (master *Master) Quit() {
 func (master *Master) registerMyself() {
 	ctxObj := ContextObject{}
 
-	ctxObj.Entity.ID = "SysComponent.Master." + master.MyID
+	ctxObj.Entity.ID = "SysComponent.Master." + master.myID
 	ctxObj.Entity.Type = "Master"
 	ctxObj.Entity.IsPattern = false
 
@@ -165,7 +165,7 @@ func (master *Master) registerMyself() {
 
 func (master *Master) unregisterMyself() {
 	entity := EntityId{}
-	entity.ID = "Master." + master.MyID
+	entity.ID = "Master." + master.myID
 	entity.Type = "Master"
 	entity.IsPattern = false
 
@@ -263,7 +263,7 @@ func (master *Master) prefetchDockerImages(imageList []DockerImage) {
 
 	for _, worker := range workers {
 		workerID := worker.Entity.ID
-		taskMsg := SendMessage{Type: "prefetch_image", RoutingKey: workerID + ".", From: master.MyID, PayLoad: imageList}
+		taskMsg := SendMessage{Type: "prefetch_image", RoutingKey: workerID + ".", From: master.myID, PayLoad: imageList}
 		master.communicator.Publish(&taskMsg)
 	}
 }
@@ -408,7 +408,12 @@ func (master *Master) onTaskUpdate(from string, update *TaskUpdate) {
 //
 func (master *Master) DeployTasks(taskInstances []*ScheduledTaskInstance) {
 	for _, pScheduledTaskInstance := range taskInstances {
-		taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: pScheduledTaskInstance.WorkerID + ".", From: master.MyID, PayLoad: *pScheduledTaskInstance}
+		// convert the operator name into the name of a proper docker image for the assigned worker
+		operatorName := (*pScheduledTaskInstance).DockerImage
+		assignedWorkerID := (*pScheduledTaskInstance).WorkerID
+		(*pScheduledTaskInstance).DockerImage = master.DetermineDockerImage(operatorName, assignedWorkerID)
+
+		taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: pScheduledTaskInstance.WorkerID + ".", From: master.myID, PayLoad: *pScheduledTaskInstance}
 		INFO.Println(taskMsg)
 		master.communicator.Publish(&taskMsg)
 	}
@@ -417,32 +422,32 @@ func (master *Master) DeployTasks(taskInstances []*ScheduledTaskInstance) {
 func (master *Master) TerminateTasks(instances []*ScheduledTaskInstance) {
 	INFO.Println("to terminate all scheduled tasks, ", len(instances))
 	for _, instance := range instances {
-		taskMsg := SendMessage{Type: "REMOVE_TASK", RoutingKey: instance.WorkerID + ".", From: master.MyID, PayLoad: *instance}
+		taskMsg := SendMessage{Type: "REMOVE_TASK", RoutingKey: instance.WorkerID + ".", From: master.myID, PayLoad: *instance}
 		INFO.Println(taskMsg)
 		master.communicator.Publish(&taskMsg)
 	}
 }
 
 func (master *Master) DeployTask(taskInstance *ScheduledTaskInstance) {
-	taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.MyID, PayLoad: *taskInstance}
+	taskMsg := SendMessage{Type: "ADD_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.myID, PayLoad: *taskInstance}
 	INFO.Println(taskMsg)
 	master.communicator.Publish(&taskMsg)
 }
 
 func (master *Master) TerminateTask(taskInstance *ScheduledTaskInstance) {
-	taskMsg := SendMessage{Type: "REMOVE_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.MyID, PayLoad: *taskInstance}
+	taskMsg := SendMessage{Type: "REMOVE_TASK", RoutingKey: taskInstance.WorkerID + ".", From: master.myID, PayLoad: *taskInstance}
 	INFO.Println(taskMsg)
 	master.communicator.Publish(&taskMsg)
 }
 
 func (master *Master) AddInputEntity(flowInfo FlowInfo) {
-	taskMsg := SendMessage{Type: "ADD_INPUT", RoutingKey: flowInfo.WorkerID + ".", From: master.MyID, PayLoad: flowInfo}
+	taskMsg := SendMessage{Type: "ADD_INPUT", RoutingKey: flowInfo.WorkerID + ".", From: master.myID, PayLoad: flowInfo}
 	INFO.Println(taskMsg)
 	master.communicator.Publish(&taskMsg)
 }
 
 func (master *Master) RemoveInputEntity(flowInfo FlowInfo) {
-	taskMsg := SendMessage{Type: "REMOVE_INPUT", RoutingKey: flowInfo.WorkerID + ".", From: master.MyID, PayLoad: flowInfo}
+	taskMsg := SendMessage{Type: "REMOVE_INPUT", RoutingKey: flowInfo.WorkerID + ".", From: master.myID, PayLoad: flowInfo}
 	INFO.Println(taskMsg)
 	master.communicator.Publish(&taskMsg)
 }
@@ -471,6 +476,26 @@ func (master *Master) RetrieveContextEntity(eid string) *ContextObject {
 
 		return nil
 	}
+}
+
+//
+// to select the right docker image of an operator for the selected worker
+//
+func (master *Master) DetermineDockerImage(operatorName string, wID string) string {
+	selectedDockerImageName := ""
+
+	wProfile := master.workers[wID]
+	master.operatorList_lock.RLock()
+	for _, image := range master.operatorList[operatorName] {
+		DEBUG.Println(image.TargetedOSType, image.TargetedHWType)
+		if image.TargetedOSType == wProfile.OSType && image.TargetedHWType == wProfile.HWType {
+			selectedDockerImageName = image.ImageName + ":" + image.ImageTag
+		}
+	}
+
+	master.operatorList_lock.RUnlock()
+
+	return selectedDockerImageName
 }
 
 //
