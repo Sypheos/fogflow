@@ -324,7 +324,6 @@ func (e *Executor) LaunchTask(task *ScheduledTaskInstance) bool {
 		var eid EntityId
 		eid.ID = outStream.StreamID
 		eid.Type = outStream.Type
-		eid.IsPattern = false
 		taskCtx.OutputStreams = append(taskCtx.OutputStreams, eid)
 	}
 
@@ -401,7 +400,6 @@ func (e *Executor) registerTask(task *ScheduledTaskInstance, portNum string, con
 
 	ctxObj.Entity.ID = "Task." + task.ID
 	ctxObj.Entity.Type = "Task"
-	ctxObj.Entity.IsPattern = false
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	ctxObj.Attributes["id"] = ValueObject{Type: "string", Value: task.ID}
@@ -425,7 +423,6 @@ func (e *Executor) updateTask(taskID string, status string) {
 
 	ctxObj.Entity.ID = "Task." + taskID
 	ctxObj.Entity.Type = "Task"
-	ctxObj.Entity.IsPattern = false
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	ctxObj.Attributes["status"] = ValueObject{Type: "string", Value: status}
@@ -441,7 +438,6 @@ func (e *Executor) deregisterTask(taskID string) {
 	entity := EntityId{}
 	entity.ID = "Task." + taskID
 	entity.Type = "Task"
-	entity.IsPattern = false
 
 	client := NGSI10Client{IoTBrokerURL: e.workerCfg.BrokerURL}
 	err := client.DeleteContext(&entity)
@@ -455,13 +451,9 @@ func (e *Executor) subscribeInputStream(agentPort string, streamType string, str
 
 	newEntity := EntityId{}
 
+	newEntity.Type = streamType
 	if len(streamId) > 0 { // for a specific context entity
-		newEntity.IsPattern = false
-		newEntity.Type = streamType
 		newEntity.ID = streamId
-	} else { // for all context entities with a specific type
-		newEntity.Type = streamType
-		newEntity.IsPattern = true
 	}
 
 	subscription.Entities = make([]EntityId, 0)

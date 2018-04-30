@@ -2,28 +2,12 @@ package discovery
 
 import (
 	"math"
-	"regexp"
 	"strings"
 
 	. "github.com/Sypheos/fogflow/common/ngsi"
 )
 
 func matchEntityId(entity EntityId, subscribedEntity EntityId) bool {
-	if subscribedEntity.IsPattern == true {
-		if subscribedEntity.ID != "" {
-			matched, _ := regexp.MatchString(subscribedEntity.ID, entity.ID)
-			if matched == false {
-				return false
-			}
-		}
-
-		if subscribedEntity.Type != "" {
-			matched, _ := regexp.MatchString(subscribedEntity.Type, entity.Type)
-			if matched == false {
-				return false
-			}
-		}
-	} else {
 		if subscribedEntity.Type != "" {
 			matched := subscribedEntity.Type == entity.Type && subscribedEntity.ID == entity.ID
 			if matched == false {
@@ -35,7 +19,6 @@ func matchEntityId(entity EntityId, subscribedEntity EntityId) bool {
 				return false
 			}
 		}
-	}
 
 	return true
 }

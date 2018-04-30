@@ -87,7 +87,6 @@ func subscribe(config *Config) string {
 	newEntity := EntityId{}
 	newEntity.ID = "Stream.Anomaly.all.09"
 	newEntity.Type = "Anomaly"
-	newEntity.IsPattern = false
 	subscription.Entities = make([]EntityId, 0)
 	subscription.Entities = append(subscription.Entities, newEntity)
 
@@ -119,7 +118,6 @@ func update(config *Config, i int) {
 	//ctxObj.Entity.ID = "Room." + strconv.Itoa(i)
 	ctxObj.Entity.ID = "Stream.Anomaly.all.09"
 	ctxObj.Entity.Type = "Anomaly"
-	ctxObj.Entity.IsPattern = false
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	ctxObj.Attributes["no"] = ValueObject{Type: "integer", Value: i}

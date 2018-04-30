@@ -115,7 +115,6 @@ func (w *Worker) publishMyself() {
 
 	ctxObj.Entity.ID = w.id
 	ctxObj.Entity.Type = "Worker"
-	ctxObj.Entity.IsPattern = false
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	ctxObj.Attributes["id"] = ValueObject{Type: "string", Value: w.id}
@@ -141,7 +140,6 @@ func (w *Worker) unpublishMyself() {
 	entity := EntityId{}
 	entity.ID = w.id
 	entity.Type = "Worker"
-	entity.IsPattern = false
 
 	client := NGSI10Client{IoTBrokerURL: w.cfg.BrokerURL}
 	err := client.DeleteContext(&entity)

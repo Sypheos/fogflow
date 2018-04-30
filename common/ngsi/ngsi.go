@@ -218,7 +218,6 @@ func (pAttr *ContextAttribute) UnmarshalJSON(b []byte) error {
 type EntityId struct {
 	ID        string `json:"id"`
 	Type      string `json:"type,omitempty"`
-	IsPattern bool   `json:"isPattern,omitempty"`
 }
 
 type ValueObject struct {
@@ -242,10 +241,7 @@ func (ctxObj *ContextObject) IsEmpty() bool {
 }
 
 type ContextElement struct {
-	Entity              EntityId           `json:"entityId"`
-	ID                  string             `json:"id"`
-	Type                string             `json:"type,omitempty"`
-	IsPattern           string             `json:"isPattern"`
+	EntityId
 	AttributeDomainName string             `json:"attributeDomainName,omitempty"`
 	Attributes          []ContextAttribute `json:"attributes,omitempty"`
 	Metadata            []ContextMetadata  `json:"domainMetadata,omitempty"`
@@ -280,9 +276,8 @@ func (ce *ContextElement) IsEmpty() bool {
 }
 
 func (ce *ContextElement) Clone(orig *ContextElement) {
-	ce.Entity.ID = orig.Entity.ID
-	ce.Entity.Type = orig.Entity.Type
-	ce.Entity.IsPattern = orig.Entity.IsPattern
+	ce.ID = orig.ID
+	ce.Type = orig.Type
 
 	ce.AttributeDomainName = orig.AttributeDomainName
 }
@@ -290,7 +285,6 @@ func (ce *ContextElement) Clone(orig *ContextElement) {
 type ContextElementOrion struct {
 	ID                  string                  `json:"id"`
 	Type                string                  `json:"type"`
-	IsPattern           string                  `json:"isPattern"`
 	AttributeDomainName string                  `json:"attributeDomainName,omitempty"`
 	Attributes          []OrionContextAttribute `json:"attributes,omitempty"`
 	Metadatas           []ContextMetadata       `json:"metadatas,omitempty"`
@@ -302,7 +296,6 @@ func (element *ContextElement) MarshalJSON() ([]byte, error) {
 
 		convertedElement.ID = element.ID
 		convertedElement.Type = element.Type
-		convertedElement.IsPattern = element.IsPattern
 
 		convertedElement.AttributeDomainName = element.AttributeDomainName
 
@@ -348,7 +341,7 @@ func (element *ContextElement) MarshalJSON() ([]byte, error) {
 			Attributes          []ContextAttribute `json:"attributes,omitempty"`
 			Metadata            []ContextMetadata  `json:"domainMetadata,omitempty"`
 		}{
-			Entity:              element.Entity,
+			Entity:              element.EntityId,
 			AttributeDomainName: element.AttributeDomainName,
 			Attributes:          element.Attributes,
 			Metadata:            element.Metadata,

@@ -147,7 +147,6 @@ func (master *Master) registerMyself() {
 
 	ctxObj.Entity.ID = "SysComponent.Master." + master.myID
 	ctxObj.Entity.Type = "Master"
-	ctxObj.Entity.IsPattern = false
 
 	ctxObj.Metadata = make(map[string]ValueObject)
 
@@ -167,7 +166,6 @@ func (master *Master) unregisterMyself() {
 	entity := EntityId{}
 	entity.ID = "Master." + master.myID
 	entity.Type = "Master"
-	entity.IsPattern = false
 
 	client := NGSI10Client{IoTBrokerURL: master.BrokerURL}
 	err := client.DeleteContext(&entity)
@@ -188,7 +186,6 @@ func (master *Master) subscribeContextEntity(entityType string) {
 
 	newEntity := EntityId{}
 	newEntity.Type = entityType
-	newEntity.IsPattern = true
 	subscription.Entities = make([]EntityId, 0)
 	subscription.Entities = append(subscription.Entities, newEntity)
 	subscription.Reference = master.myURL
@@ -275,7 +272,6 @@ func (master *Master) queryWorkers() []*ContextObject {
 
 	entity := EntityId{}
 	entity.Type = "Worker"
-	entity.IsPattern = true
 	query.Entities = append(query.Entities, entity)
 
 	client := NGSI10Client{IoTBrokerURL: master.BrokerURL}
@@ -467,7 +463,6 @@ func (master *Master) RetrieveContextEntity(eid string) *ContextObject {
 
 	entity := EntityId{}
 	entity.ID = eid
-	entity.IsPattern = false
 	query.Entities = append(query.Entities, entity)
 
 	client := NGSI10Client{IoTBrokerURL: master.BrokerURL}

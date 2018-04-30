@@ -15,7 +15,7 @@ type NGSI10Client struct {
 
 func CtxElement2Object(ctxElem *ContextElement) *ContextObject {
 	ctxObj := ContextObject{}
-	ctxObj.Entity = ctxElem.Entity
+	ctxObj.Entity = ctxElem.EntityId
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	for _, attr := range ctxElem.Attributes {
@@ -33,7 +33,7 @@ func CtxElement2Object(ctxElem *ContextElement) *ContextObject {
 func Object2CtxElement(ctxObj *ContextObject) *ContextElement {
 	ctxElement := ContextElement{}
 
-	ctxElement.Entity = ctxObj.Entity
+	ctxElement.EntityId = ctxObj.Entity
 
 	ctxElement.Attributes = make([]ContextAttribute, 0)
 	for name, attr := range ctxObj.Attributes {
@@ -98,10 +98,8 @@ func (nc *NGSI10Client) DeleteContext(eid *EntityId) error {
 	entity := EntityId{}
 	entity.ID = eid.ID
 	entity.Type = eid.Type
-	entity.IsPattern = eid.IsPattern
 
-	element.Entity = entity
-
+	element.EntityId = entity
 	updateCtxReq := &UpdateContextRequest{
 		ContextElements: []ContextElement{element},
 		UpdateAction:    "DELETE",
@@ -527,7 +525,6 @@ func (nc *NGSI9Client) DiscoveryNearbyIoTBroker(nearby NearBy) (string, error) {
 
 	entity := EntityId{}
 	entity.Type = "IoTBroker"
-	entity.IsPattern = true
 	discoverReq.Entities = make([]EntityId, 0)
 
 	discoverReq.Entities = append(discoverReq.Entities, entity)
@@ -545,12 +542,8 @@ func (nc *NGSI9Client) DiscoveryNearbyIoTBroker(nearby NearBy) (string, error) {
 		return "", err
 	}
 
-	if registerationList == nil {
-		return "", nil
-	} else {
 		for _, reg := range registerationList {
 			return reg.ProvidingApplication, nil
 		}
-	}
 	return "", nil
 }

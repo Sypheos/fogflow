@@ -70,8 +70,8 @@ func (er *EntityRepository) updateEntity(entity EntityId, registration *ContextR
 	}
 	if rows.Next() == false {
 		// insert new entity
-		insertEntity := fmt.Sprintf("INSERT INTO entity_tab(eid, type, isPattern, providerURL) VALUES('%s', '%s', '%t', '%s');",
-			entity.ID, entity.Type, entity.IsPattern,
+		insertEntity := fmt.Sprintf("INSERT INTO entity_tab(eid, type, providerURL) VALUES('%s', '%s', '%s');",
+			entity.ID, entity.Type,
 			registration.ProvidingApplication)
 		statements = append(statements, insertEntity)
 	}
@@ -208,8 +208,9 @@ func (er *EntityRepository) queryEntities(entities []EntityId, attributes []stri
 	entityMap := make(map[string][]EntityId)
 
 	for _, entity := range entities {
+		DEBUG.Println(entity)
 		// three steps to construct the SQL statement to query the result
-		queryStatement := "SELECT entity_tab.eid, entity_tab.type, entity_tab.ispattern, entity_tab.providerurl FROM entity_tab "
+		queryStatement := "SELECT entity_tab.eid, entity_tab.type, entity_tab.providerurl FROM entity_tab "
 
 		// (1) consider attribute list
 		for i, attr := range attributes {
@@ -295,21 +296,18 @@ func (er *EntityRepository) queryEntities(entities []EntityId, attributes []stri
 			queryStatement = queryStatement + fmt.Sprintf(" INNER JOIN geo_box_tab ON entity_tab.eid = geo_box_tab.eid ")
 		}
 
-		// (4) consider entity_id
-		if entity.IsPattern == true {
-			if entity.Type != "" && entity.ID != "" {
-				queryStatement = queryStatement + fmt.Sprintf(" WHERE entity_tab.eid like '%s' AND entity_tab.type like '%s'",
-					strings.Replace(entity.ID, ".*", "%", -1), strings.Replace(entity.Type, ".*", "%", -1))
-			} else if entity.Type != "" {
-				queryStatement = queryStatement + fmt.Sprintf(" WHERE entity_tab.type like '%s'",
-					strings.Replace(entity.Type, ".*", "%", -1))
-			} else if entity.ID != "" {
-				queryStatement = queryStatement + fmt.Sprintf(" WHERE entity_tab.eid like '%s' ",
-					strings.Replace(entity.ID, ".*", "%", -1))
-			}
-		} else {
-			queryStatement = queryStatement + fmt.Sprintf(" WHERE entity_tab.eid = '%s' ", entity.ID)
+		whereSeg := ""
+		if entity.ID != "" {
+			whereSeg = fmt.Sprintf(" WHERE entity_tab.eid = '%s' ", entity.ID)
 		}
+		if entity.Type != "" {
+			if whereSeg != "" {
+				whereSeg += fmt.Sprintf("AND entity_tab.type = '%s' ", entity.Type)
+			} else {
+				whereSeg = fmt.Sprintf("AND entity_tab.type = '%s' ", entity.Type)
+			}
+		}
+		queryStatement += whereSeg
 
 		// (5) consider sorting based on geo-distance
 		if orderBy != "" {
@@ -326,16 +324,10 @@ func (er *EntityRepository) queryEntities(entities []EntityId, attributes []stri
 
 		// prepare the result according the returned dataset
 		for rows.Next() {
-			var eid, etype, ispattern, providerURL string
-			rows.Scan(&eid, &etype, &ispattern, &providerURL)
+			var eid, etype, providerURL string
+			rows.Scan(&eid, &etype, &providerURL)
 
-			var bIsPattern bool
-			if ispattern == "true" {
-				bIsPattern = true
-			} else {
-				bIsPattern = false
-			}
-			e := EntityId{ID: eid, Type: etype, IsPattern: bIsPattern}
+			e := EntityId{ID: eid, Type: etype}
 			entityMap[providerURL] = append(entityMap[providerURL], e)
 		}
 		rows.Close()
@@ -440,7 +432,7 @@ func (er *EntityRepository) retrieveRegistration(entityID string) *ContextRegist
 	defer er.dbLock.RUnlock()
 
 	// query all entities associated with this registrationId
-	queryStatement := fmt.Sprintf("SELECT eid, type, isPattern, providerURL FROM entity_tab WHERE entity_tab.eid = '%s';", entityID)
+	queryStatement := fmt.Sprintf("SELECT eid, type, providerURL FROM entity_tab WHERE entity_tab.eid = '%s';", entityID)
 
 	rows, err := er.query(queryStatement)
 	if err != nil {
@@ -460,12 +452,6 @@ func (er *EntityRepository) retrieveRegistration(entityID string) *ContextRegist
 		entity := EntityId{}
 		entity.ID = eid
 		entity.Type = etype
-
-		if epattern == "true" {
-			entity.IsPattern = true
-		} else {
-			entity.IsPattern = false
-		}
 
 		entities = append(entities, entity)
 

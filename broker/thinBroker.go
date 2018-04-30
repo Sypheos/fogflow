@@ -107,7 +107,7 @@ func (tb *ThinBroker) registerMyself() bool {
 	registration := ContextRegistration{}
 
 	entities := make([]EntityId, 0)
-	entity := EntityId{ID: tb.myEntityId, Type: "IoTBroker", IsPattern: false}
+	entity := EntityId{ID: tb.myEntityId, Type: "IoTBroker"}
 	entities = append(entities, entity)
 	registration.EntityIdList = entities
 
@@ -168,7 +168,7 @@ func (tb *ThinBroker) getEntity(eid string) *ContextElement {
 	if entity, exist := tb.entities[eid]; exist {
 		element := ContextElement{}
 
-		element.Entity = entity.Entity
+		element.EntityId = entity.EntityId
 		element.AttributeDomainName = entity.AttributeDomainName
 		element.Attributes = make([]ContextAttribute, len(entity.Attributes))
 		copy(element.Attributes, entity.Attributes)
@@ -191,7 +191,7 @@ func (tb *ThinBroker) deleteEntity(eid string) error {
 
 	// inform the subscribers that this entity is deleted by sending a empty context element without any attribute, metadata
 	emptyElement := ContextElement{}
-	emptyElement.Entity.ID = eid
+	emptyElement.ID = eid
 	tb.notifySubscribers(&emptyElement)
 
 	//unregister this entity from IoT Discovery
@@ -381,7 +381,7 @@ func (tb *ThinBroker) UpdateContext(w rest.ResponseWriter, r *rest.Request) {
 	case "UPDATE":
 		for _, ctxElem := range updateCtxReq.ContextElements {
 			tb.entities_lock.Lock()
-			eid := ctxElem.Entity.ID
+			eid := ctxElem.ID
 			hasUpdatedMetadata := hasUpdatedMetadata(&ctxElem, tb.entities[eid])
 			tb.entities_lock.Unlock()
 
@@ -404,7 +404,7 @@ func (tb *ThinBroker) UpdateContext(w rest.ResponseWriter, r *rest.Request) {
 
 		// remove this entity from the entity map
 		for _, ctxElem := range updateCtxReq.ContextElements {
-			tb.deleteEntity(ctxElem.Entity.ID)
+			tb.deleteEntity(ctxElem.ID)
 		}
 	}
 }
@@ -431,7 +431,7 @@ func (tb *ThinBroker) NotifyContext(w rest.ResponseWriter, r *rest.Request) {
 }
 
 func (tb *ThinBroker) notifySubscribers(ctxElem *ContextElement) {
-	eid := ctxElem.Entity.ID
+	eid := ctxElem.ID
 
 	tb.e2sub_lock.RLock()
 	defer tb.e2sub_lock.RUnlock()
@@ -504,7 +504,7 @@ func (tb *ThinBroker) sendReliableNotify(elements []ContextElement, sid string) 
 
 func (tb *ThinBroker) updateContextElement(ctxElem *ContextElement) {
 	//look up who already subscribed to this context element
-	eid := ctxElem.Entity.ID
+	eid := ctxElem.ID
 
 	tb.entities_lock.Lock()
 	defer tb.entities_lock.Unlock()
@@ -786,7 +786,7 @@ func (tb *ThinBroker) registerContextElement(element *ContextElement) {
 	registration := ContextRegistration{}
 
 	entities := make([]EntityId, 0)
-	entities = append(entities, element.Entity)
+	entities = append(entities, element.EntityId)
 	registration.EntityIdList = entities
 
 	attributes := make([]ContextRegistrationAttribute, 0)
@@ -801,7 +801,7 @@ func (tb *ThinBroker) registerContextElement(element *ContextElement) {
 	registration.Metadata = element.Metadata
 	registration.ProvidingApplication = tb.MyURL
 
-	//fmt.Println("update the availability information of entity ", element.Entity.ID)
+	//fmt.Println("update the availability information of entity ", element.ID)
 
 	// create or update registered context
 	registerCtxReq := RegisterContextRequest{}
@@ -823,7 +823,7 @@ func (tb *ThinBroker) deregisterContextElements(ContextElements []ContextElement
 		registration := ContextRegistration{}
 
 		entities := make([]EntityId, 0)
-		entities = append(entities, element.Entity)
+		entities = append(entities, element.EntityId)
 		registration.EntityIdList = entities
 
 		registration.ProvidingApplication = tb.MyURL

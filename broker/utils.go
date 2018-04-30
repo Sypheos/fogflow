@@ -20,17 +20,6 @@ func postNotifyContext(ctxElems []ContextElement, subscriptionId string, URL str
 	}
 
 	for _, elem := range ctxElems {
-		if IsOrionBroker == true {
-			// convert it to orion-compatible format
-			elem.ID = elem.Entity.ID
-			elem.Type = elem.Entity.Type
-			if elem.Entity.IsPattern == true {
-				elem.IsPattern = "true"
-			} else {
-				elem.IsPattern = "false"
-			}
-		}
-
 		elementResponse := ContextElementResponse{}
 		elementResponse.ContextElement = elem
 		elementResponse.StatusCode.Code = 200

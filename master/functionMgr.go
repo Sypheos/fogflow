@@ -365,8 +365,8 @@ func (flow *FogFlow) expandExecutionPlan(entityID string, inputSubscription *Inp
 			taskInstance.Outputs = make([]OutputStream, 0)
 			for _, ctxElem := range task.Outputs {
 				outstream := OutputStream{}
-				outstream.Type = ctxElem.Entity.Type
-				outstream.StreamID = ctxElem.Entity.ID
+				outstream.Type = ctxElem.Type
+				outstream.StreamID = ctxElem.ID
 				outstream.Annotations = ctxElem.Attributes
 
 				taskInstance.Outputs = append(taskInstance.Outputs, outstream)
@@ -624,8 +624,8 @@ func (flow *FogFlow) generateOutputs(group *GroupInfo) []*ContextElement {
 	for _, annotator := range flow.OutputAnnotators {
 		ctxElem := ContextElement{}
 
-		ctxElem.Entity.ID = "Stream." + annotator.EntityType + ".01"
-		ctxElem.Entity.Type = annotator.EntityType
+		ctxElem.ID = "Stream." + annotator.EntityType + ".01"
+		ctxElem.Type = annotator.EntityType
 
 		if annotator.InputInherited == true {
 			for key, value := range *group {
@@ -786,14 +786,12 @@ func (fMgr *FunctionMgr) selector2Subscription(inputSelector *Selector) string {
 		case "EntityId":
 			newEntity := EntityId{}
 			newEntity.ID = condition.Value
-			newEntity.IsPattern = false
 			availabilitySubscription.Entities = make([]EntityId, 0)
 			availabilitySubscription.Entities = append(availabilitySubscription.Entities, newEntity)
 
 		case "EntityType":
 			newEntity := EntityId{}
 			newEntity.Type = condition.Value
-			newEntity.IsPattern = true
 			availabilitySubscription.Entities = make([]EntityId, 0)
 			availabilitySubscription.Entities = append(availabilitySubscription.Entities, newEntity)
 

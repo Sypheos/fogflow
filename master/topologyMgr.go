@@ -306,7 +306,6 @@ func (tMgr *TopologyMgr) queryEdgeNodes() []*ContextObject {
 
 	entity := EntityId{}
 	entity.Type = "Worker"
-	entity.IsPattern = true
 	query.Entities = append(query.Entities, entity)
 
 	restriction := Restriction{}
@@ -338,7 +337,6 @@ func (tMgr *TopologyMgr) queryStreams(restriction *Restriction, streamTypes []In
 
 		entity := EntityId{}
 		entity.ID = "Stream." + streamType.Topic + ".*"
-		entity.IsPattern = true
 		query.Entities = append(query.Entities, entity)
 
 		if restriction != nil && streamType.Scoped == true {
