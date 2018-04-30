@@ -146,7 +146,7 @@ func (metadata *ContextMetadata) UnmarshalJSON(b []byte) error {
 type ContextAttribute struct {
 	Name     string            `json:"name"`
 	Type     string            `json:"type,omitempty"`
-	Value    interface{}       `json:"contextValue"`
+	Value    interface{}       `json:"value"`
 	Metadata []ContextMetadata `json:"metadata,omitempty"`
 }
 
@@ -157,7 +157,7 @@ type OrionContextAttribute struct {
 	Metadata []ContextMetadata `json:"metadata,omitempty"`
 }
 
-func (pAttr *ContextAttribute) UnmarshalJSON(b []byte) error {
+/*func (pAttr *ContextAttribute) UnmarshalJSON(b []byte) error {
 	type InternalAttributeObject struct {
 		Name     string            `json:"name"`
 		Type     string            `json:"type,omitempty"`
@@ -213,7 +213,7 @@ func (pAttr *ContextAttribute) UnmarshalJSON(b []byte) error {
 	(*pAttr).Metadata = attr.Metadata
 
 	return err
-}
+}*/
 
 type EntityId struct {
 	ID        string `json:"id"`
@@ -290,7 +290,7 @@ type ContextElementOrion struct {
 	Metadatas           []ContextMetadata       `json:"metadatas,omitempty"`
 }
 
-func (element *ContextElement) MarshalJSON() ([]byte, error) {
+/*func (element *ContextElement) MarshalJSON() ([]byte, error) {
 	if element.ID != "" || element.Type != "" {
 		convertedElement := ContextElementOrion{}
 
@@ -313,7 +313,7 @@ func (element *ContextElement) MarshalJSON() ([]byte, error) {
 			convertedElement.Attributes = append(convertedElement.Attributes, orionAttr)
 		}
 
-		/* Orion is not using domain context metadata
+		*//* Orion is not using domain context metadata
 		convertedElement.Metadatas = make([]ContextMetadata, len(element.Metadata))
 		copy(convertedElement.Metadatas, element.Metadata)
 
@@ -331,7 +331,7 @@ func (element *ContextElement) MarshalJSON() ([]byte, error) {
 				}
 
 				convertedElement.Metadatas = append(convertedElement.Metadatas, orionMeta)
-			} */
+			} *//*
 
 		return json.Marshal(&convertedElement)
 	} else {
@@ -347,7 +347,7 @@ func (element *ContextElement) MarshalJSON() ([]byte, error) {
 			Metadata:            element.Metadata,
 		})
 	}
-}
+}*/
 
 type StatusCode struct {
 	Code         int    `json:"code"`
