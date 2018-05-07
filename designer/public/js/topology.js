@@ -418,8 +418,8 @@ function displayTopologyList(topologies)
 		
     		html += '<tr>'; 
 		html += '<td>' + topology.entityId.id;
-		html += '<br><button id="editor-' + topology.entityId.id + '" type="button" class="btn btn-default">editor</button>';
-		html += '<br><button id="delete-' + topology.entityId.id + '" type="button" class="btn btn-default">delete</button>';
+		html += '<br><button id="editor-' + topology.id + '" type="button" class="btn btn-default">editor</button>';
+		html += '<br><button id="delete-' + topology.id + '" type="button" class="btn btn-default">delete</button>';
 		html += '</td>';        
 		html += '<td>' + topology.entityId.type + '</td>'; 
                         

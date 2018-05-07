@@ -903,8 +903,8 @@ function registerDockerImage()
 function updateDockerImageList()
 {
     var queryReq = {}
-    queryReq.entities = [{type:'DockerImage', isPattern: true}];           
-    
+    queryReq.entities = [{type:'DockerImage', isPattern: true}];
+
     client.queryContext(queryReq).then( function(imageList) {
         console.log(imageList);
         displayDockerImageList(imageList);

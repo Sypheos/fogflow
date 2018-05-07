@@ -304,7 +304,7 @@ func (er *EntityRepository) queryEntities(entities []EntityId, attributes []stri
 			if whereSeg != "" {
 				whereSeg += fmt.Sprintf("AND entity_tab.type = '%s' ", entity.Type)
 			} else {
-				whereSeg = fmt.Sprintf("AND entity_tab.type = '%s' ", entity.Type)
+				whereSeg = fmt.Sprintf("WHERE entity_tab.type = '%s' ", entity.Type)
 			}
 		}
 		queryStatement += whereSeg

@@ -2,14 +2,15 @@
     
 function CtxElement2JSONObject(e) {
     var jsonObj = {};
-    jsonObj.entityId = e.entityId;
+    jsonObj.id = e.id;
+    jsonObj.type = e.type;
 
     jsonObj.attributes = {}    
     for(var i=0; e.attributes && i<e.attributes.length; i++) {
         var attr = e.attributes[i];
         jsonObj.attributes[attr.name] = {
             type: attr.type, 
-            value: attr.contextValue
+            value: attr.value
         };
     }
     
@@ -28,14 +29,15 @@ function CtxElement2JSONObject(e) {
 function JSONObject2CtxElement(ob) {
     console.log('convert json object to context element') 
     var contextElement = {};
-    
-    contextElement.entityId = ob.entityId;
+
+    contextElement.ID = ob.entityId.id;
+    contextElement.Type = ob.entityId.type;
     
     contextElement.attributes = [];
     if(ob.attributes) {
         for( key in ob.attributes ) {
             attr = ob.attributes[key];
-            contextElement.attributes.push({name: key, type: attr.type, contextValue: attr.value});
+            contextElement.attributes.push({name: key, type: attr.type, value: attr.value});
         }
     }
     

@@ -1,7 +1,7 @@
 {
 	"webSrvPort": 8080,
-    "discoveryURL": "http://195.37.154.32:8071/ngsi9",        
-    "brokerURL": "http://195.37.154.32:8070/ngsi10",
+    "discoveryURL": "http://localhost:8071/ngsi9",
+    "brokerURL": "http://localhost:8070/ngsi10",
     "agentIP": "195.37.154.32",
     "agentPort": 1030
 }
