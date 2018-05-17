@@ -156,6 +156,7 @@ func (master *Master) registerMyself() {
 	ctxObj.Metadata["location"] = ValueObject{Type: "point", Value: mylocation}
 
 	client := NGSI10Client{IoTBrokerURL: master.BrokerURL}
+	INFO.Println("Registering master")
 	err := client.UpdateContext(&ctxObj)
 	if err != nil {
 		ERROR.Println(err)

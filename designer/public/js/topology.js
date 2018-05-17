@@ -190,7 +190,7 @@ function openEditor(topologyEntity)
 function deleteTopology(topologyEntity)
 {
     var entityid = {
-        id : topologyEntity.entityId.id, 
+        id : topologyEntity.id,
         type: 'Topology',
         isPattern: false
     };	    
@@ -417,11 +417,11 @@ function displayTopologyList(topologies)
         var topology = topologies[i];
 		
     		html += '<tr>'; 
-		html += '<td>' + topology.entityId.id;
+		html += '<td>' + topology.id;
 		html += '<br><button id="editor-' + topology.id + '" type="button" class="btn btn-default">editor</button>';
 		html += '<br><button id="delete-' + topology.id + '" type="button" class="btn btn-default">delete</button>';
 		html += '</td>';        
-		html += '<td>' + topology.entityId.type + '</td>'; 
+		html += '<td>' + topology.type + '</td>';
                         
 		html += '<td>' + topology.attributes.status.value + '</td>';        
 		html += '<td>' + JSON.stringify(topology.attributes.template.value) + '</td>';
@@ -437,14 +437,14 @@ function displayTopologyList(topologies)
         var topology = topologies[i];
         
 		// association handlers to the buttons
-        var editorButton = document.getElementById('editor-' + topology.entityId.id);
+        var editorButton = document.getElementById('editor-' + topology.id);
         editorButton.onclick = function(mytopology) {
             return function(){
                 openEditor(mytopology);
             };
         }(topology);
 		
-        var deleteButton = document.getElementById('delete-' + topology.entityId.id);
+        var deleteButton = document.getElementById('delete-' + topology.id);
         deleteButton.onclick = function(mytopology) {
             return function(){
                 deleteTopology(mytopology);
@@ -489,8 +489,8 @@ function displayRequirementList(requirements)
         var requirement = requirements[i];
 		
         html += '<tr>'; 
-		html += '<td>' + requirement.entityId.id + '</td>';
-		html += '<td>' + requirement.entityId.type + '</td>'; 
+		html += '<td>' + requirement.id + '</td>';
+		html += '<td>' + requirement.type + '</td>';
 		html += '<td>' + JSON.stringify(requirement.attributes) + '</td>';        
 		html += '<td>' + JSON.stringify(requirement.metadata) + '</td>';
 		html += '</tr>';	

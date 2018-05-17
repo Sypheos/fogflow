@@ -160,7 +160,7 @@ function displayMasterList(masters)
 
     for(var i=0; i<masters.length; i++){
         var master = masters[i];
-        html += '<tr><td>' + master.entityId.id + '</td><td>' + JSON.stringify(master.metadata) + '</td></tr>';			
+        html += '<tr><td>' + master.id + '</td><td>' + JSON.stringify(master.metadata) + '</td></tr>';
 	}
        
     html += '</table>';            
@@ -203,7 +203,7 @@ function displayWorker(workers)
         var worker = workers[i];
 		
         html += '<tr>'; 
-		html += '<td>' + worker.entityId.id + '</td>';
+		html += '<td>' + worker.id + '</td>';
 		html += '<td>' + worker.metadata.role.value + '</td>';        
 		html += '<td>' + JSON.stringify(worker.attributes) + '</td>';
 		html += '<td>' + JSON.stringify(worker.metadata) + '</td>';
@@ -267,8 +267,8 @@ function displayDeviceList(devices)
         var device = devices[i];
 		
         html += '<tr>'; 
-		html += '<td>' + device.entityId.id + '<br><button id="' + device.entityId.id + '" type="button" class="btn btn-default">Download Profile</button></td>';
-		html += '<td>' + device.entityId.type + '</td>'; 
+		html += '<td>' + device.id + '<br><button id="' + device.id + '" type="button" class="btn btn-default">Download Profile</button></td>';
+		html += '<td>' + device.type + '</td>';
 		html += '<td>' + JSON.stringify(device.attributes) + '</td>';        
 		html += '<td>' + JSON.stringify(device.metadata) + '</td>';
 		html += '</tr>';	                        
@@ -281,9 +281,9 @@ function displayDeviceList(devices)
     // associate a click handler to generate device profile on request
     for(var i=0; i<devices.length; i++){
         var device = devices[i];
-        console.log(device.entityId.id);
+        console.log(device.id);
         
-        var profileButton = document.getElementById(device.entityId.id);
+        var profileButton = document.getElementById(device.id);
         profileButton.onclick = function(d) {
             var myProfile = d;
             return function(){
@@ -298,7 +298,7 @@ function downloadDeviceProfile(deviceObj)
     var profile = {};
     
     profile.id = deviceObj.attributes.id.value;
-    profile.type = deviceObj.entityId.type;
+    profile.type = deviceObj.type;
     profile.iconURL = deviceObj.attributes.iconURL.value;
     profile.pullbased = deviceObj.attributes.pullbased.value;    
     profile.location = deviceObj.metadata.location.value;
@@ -605,8 +605,8 @@ function displayStreamList(streams)
         var stream = streams[i];
 		
         html += '<tr>'; 
-		html += '<td>' + stream.entityId.id + '</td>';
-		html += '<td>' + stream.entityId.type + '</td>'; 
+		html += '<td>' + stream.id + '</td>';
+		html += '<td>' + stream.type + '</td>';
 		html += '<td>' + JSON.stringify(stream.attributes) + '</td>';        
 		html += '<td>' + JSON.stringify(stream.metadata) + '</td>';
 		html += '</tr>';	
@@ -653,8 +653,8 @@ function displayTaskList(tasks)
         var task = tasks[i];
 		
         html += '<tr>'; 
-		html += '<td>' + task.entityId.id + '</td>';
-		html += '<td>' + task.entityId.type + '</td>'; 
+		html += '<td>' + task.id + '</td>';
+		html += '<td>' + task.type + '</td>';
 		html += '<td>' + JSON.stringify(task.attributes) + '</td>';        
 		html += '<td>' + JSON.stringify(task.metadata) + '</td>';
 		html += '</tr>';	

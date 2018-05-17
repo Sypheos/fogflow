@@ -62,7 +62,7 @@ func (nc *NGSI10Client) UpdateContext(ctxObj *ContextObject) error {
 	if err != nil {
 		return err
 	}
-
+	fmt.Println(string(body))
 	req, err := http.NewRequest("POST", nc.IoTBrokerURL+"/updateContext", bytes.NewBuffer(body))
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
@@ -76,7 +76,7 @@ func (nc *NGSI10Client) UpdateContext(ctxObj *ContextObject) error {
 	defer resp.Body.Close()
 
 	text, _ := ioutil.ReadAll(resp.Body)
-	//fmt.Println(string(text))
+	fmt.Println(string(text))
 
 	updateCtxResp := UpdateContextResponse{}
 	err = json.Unmarshal(text, &updateCtxResp)
