@@ -145,8 +145,8 @@ func (master *Master) Quit() {
 func (master *Master) registerMyself() {
 	ctxObj := ContextObject{}
 
-	ctxObj.Entity.ID = "SysComponent.Master." + master.MyID
-	ctxObj.Entity.Type = "Master"
+	ctxObj.ID = "SysComponent.Master." + master.MyID
+	ctxObj.Type = "Master"
 
 	ctxObj.Metadata = make(map[string]ValueObject)
 
@@ -260,7 +260,7 @@ func (master *Master) prefetchDockerImages(imageList []DockerImage) {
 	workers := master.queryWorkers()
 
 	for _, worker := range workers {
-		workerID := worker.Entity.ID
+		workerID := worker.ID
 		taskMsg := SendMessage{Type: "prefetch_image", RoutingKey: workerID + ".", From: master.MyID, PayLoad: imageList}
 		master.communicator.Publish(&taskMsg)
 	}
@@ -320,8 +320,8 @@ func (master *Master) contextRegistration2EntityRegistration(entityId *EntityId,
 		entityRegistration.ID = entityId.ID
 		entityRegistration.Type = entityId.Type
 	} else {
-		entityRegistration.ID = ctxObj.Entity.ID
-		entityRegistration.Type = ctxObj.Entity.Type
+		entityRegistration.ID = ctxObj.ID
+		entityRegistration.Type = ctxObj.Type
 
 		entityRegistration.AttributesList = make(map[string]ContextRegistrationAttribute)
 		for attrName, attrValue := range ctxObj.Attributes {

@@ -216,8 +216,8 @@ type OrionContextAttribute struct {
 }*/
 
 type EntityId struct {
-	ID        string `json:"id"`
-	Type      string `json:"type,omitempty"`
+	ID   string `json:"id"`
+	Type string `json:"type,omitempty"`
 }
 
 type ValueObject struct {
@@ -226,7 +226,7 @@ type ValueObject struct {
 }
 
 type ContextObject struct {
-	Entity              EntityId               `json:"entityId"`
+	EntityId            `json:"entityId"`
 	Attributes          map[string]ValueObject `json:"attributes,omitempty"`
 	Metadata            map[string]ValueObject `json:"metadata,omitempty"`
 	AttributeDomainName string                 `json:"attributeDomainName,omitempty"`
@@ -241,7 +241,7 @@ func (ctxObj *ContextObject) IsEmpty() bool {
 }
 
 type ContextElement struct {
-	EntityId
+	EntityId            `json:"entityId"`
 	AttributeDomainName string             `json:"attributeDomainName,omitempty"`
 	Attributes          []ContextAttribute `json:"attributes,omitempty"`
 	Metadata            []ContextMetadata  `json:"domainMetadata,omitempty"`
@@ -291,47 +291,47 @@ type ContextElementOrion struct {
 }
 
 /*func (element *ContextElement) MarshalJSON() ([]byte, error) {
-	if element.ID != "" || element.Type != "" {
-		convertedElement := ContextElementOrion{}
+if element.ID != "" || element.Type != "" {
+	convertedElement := ContextElementOrion{}
 
-		convertedElement.ID = element.ID
-		convertedElement.Type = element.Type
+	convertedElement.ID = element.ID
+	convertedElement.Type = element.Type
 
-		convertedElement.AttributeDomainName = element.AttributeDomainName
+	convertedElement.AttributeDomainName = element.AttributeDomainName
 
-		convertedElement.Attributes = make([]OrionContextAttribute, 0)
+	convertedElement.Attributes = make([]OrionContextAttribute, 0)
 
-		for _, attr := range element.Attributes {
-			orionAttr := OrionContextAttribute{}
-			orionAttr.Name = attr.Name
-			orionAttr.Type = attr.Type
-			orionAttr.Value = attr.Value
+	for _, attr := range element.Attributes {
+		orionAttr := OrionContextAttribute{}
+		orionAttr.Name = attr.Name
+		orionAttr.Type = attr.Type
+		orionAttr.Value = attr.Value
 
-			orionAttr.Metadata = make([]ContextMetadata, len(attr.Metadata))
-			copy(orionAttr.Metadata, attr.Metadata)
+		orionAttr.Metadata = make([]ContextMetadata, len(attr.Metadata))
+		copy(orionAttr.Metadata, attr.Metadata)
 
-			convertedElement.Attributes = append(convertedElement.Attributes, orionAttr)
+		convertedElement.Attributes = append(convertedElement.Attributes, orionAttr)
+	}
+
+*/ /* Orion is not using domain context metadata
+convertedElement.Metadatas = make([]ContextMetadata, len(element.Metadata))
+copy(convertedElement.Metadatas, element.Metadata)
+
+	convertedElement.Metadatas = make([]ContextMetadata, 0)
+	for _, meta := range element.Metadata {
+		orionMeta := ContextMetadata{}
+		orionMeta.Name = meta.Name
+		orionMeta.Type = "string"
+
+		bytes, err := json.Marshal(&meta.Value)
+		if err == nil {
+			orionMeta.Value = string(bytes)
+		} else {
+			orionMeta.Value = ""
 		}
 
-		*//* Orion is not using domain context metadata
-		convertedElement.Metadatas = make([]ContextMetadata, len(element.Metadata))
-		copy(convertedElement.Metadatas, element.Metadata)
-
-			convertedElement.Metadatas = make([]ContextMetadata, 0)
-			for _, meta := range element.Metadata {
-				orionMeta := ContextMetadata{}
-				orionMeta.Name = meta.Name
-				orionMeta.Type = "string"
-
-				bytes, err := json.Marshal(&meta.Value)
-				if err == nil {
-					orionMeta.Value = string(bytes)
-				} else {
-					orionMeta.Value = ""
-				}
-
-				convertedElement.Metadatas = append(convertedElement.Metadatas, orionMeta)
-			} *//*
+		convertedElement.Metadatas = append(convertedElement.Metadatas, orionMeta)
+	} */ /*
 
 		return json.Marshal(&convertedElement)
 	} else {
