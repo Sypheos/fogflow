@@ -241,7 +241,7 @@ func (ctxObj *ContextObject) IsEmpty() bool {
 }
 
 type ContextElement struct {
-	EntityId            `json:"entityId"`
+	EntityId
 	AttributeDomainName string             `json:"attributeDomainName,omitempty"`
 	Attributes          []ContextAttribute `json:"attributes,omitempty"`
 	Metadata            []ContextMetadata  `json:"domainMetadata,omitempty"`

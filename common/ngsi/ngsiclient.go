@@ -15,7 +15,7 @@ type NGSI10Client struct {
 
 func CtxElement2Object(ctxElem *ContextElement) *ContextObject {
 	ctxObj := ContextObject{}
-	ctxObj.Entity = ctxElem.EntityId
+	ctxObj.EntityId = ctxElem.EntityId
 
 	ctxObj.Attributes = make(map[string]ValueObject)
 	for _, attr := range ctxElem.Attributes {
@@ -33,7 +33,7 @@ func CtxElement2Object(ctxElem *ContextElement) *ContextObject {
 func Object2CtxElement(ctxObj *ContextObject) *ContextElement {
 	ctxElement := ContextElement{}
 
-	ctxElement.EntityId = ctxObj.Entity
+	ctxElement.EntityId = ctxObj.EntityId
 
 	ctxElement.Attributes = make([]ContextAttribute, 0)
 	for name, attr := range ctxObj.Attributes {
@@ -542,8 +542,8 @@ func (nc *NGSI9Client) DiscoveryNearbyIoTBroker(nearby NearBy) (string, error) {
 		return "", err
 	}
 
-		for _, reg := range registerationList {
-			return reg.ProvidingApplication, nil
-		}
+	for _, reg := range registerationList {
+		return reg.ProvidingApplication, nil
+	}
 	return "", nil
 }
